@@ -89,7 +89,7 @@ resource domainControllerConfiguration 'Microsoft.Compute/virtualMachines/extens
     typeHandlerVersion: '2.77'
     autoUpgradeMinorVersion: true
     settings: {
-      ModulesUrl: 'https://github.com/joshua-a-lucas/BlueTeamLab/main/modules/Deploy-DomainServices.zip'
+      ModulesUrl: 'https://github.com/joshua-a-lucas/BlueTeamLab/raw/main/scripts/Deploy-DomainServices.zip'
       ConfigurationFunction: 'Deploy-DomainServices.ps1\\Deploy-DomainServices'
       Properties: {
         domainFQDN: domainFQDN
@@ -158,7 +158,7 @@ resource workstationConfiguration 'Microsoft.Compute/virtualMachines/extensions@
     typeHandlerVersion: '2.77'
     autoUpgradeMinorVersion: true
     settings: {
-      ModulesUrl: 'https://github.com/joshua-a-lucas/BlueTeamLab/main/modules/Join-Domain.zip'
+      ModulesUrl: 'https://github.com/joshua-a-lucas/BlueTeamLab/raw/main/scripts/Join-Domain.zip'
       ConfigurationFunction: 'Join-Domain.ps1\\Join-Domain'
       Properties: {
         domainFQDN: domainFQDN
