@@ -189,8 +189,6 @@ module workspace 'modules/sentinel.bicep' = {
   }
 }
 
-/////////////////////////////////////////
-
 // Create data collection rule
 resource dcr 'Microsoft.Insights/dataCollectionRules@2021-04-01' = {
   name: 'DCR'
