@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1318.3566",
-      "templateHash": "58420152891663960"
+      "templateHash": "17065110226201472655"
     }
   },
   "parameters": {
@@ -65,9 +65,21 @@
         "description": "Name for the workstation virtual machine."
       }
     },
+    "virtualMachineSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS1_v2",
+      "allowedValues": [
+        "Standard_DS1_v2",
+        "Standard_D2s_v3"
+      ],
+      "metadata": {
+        "description": "Size for both the domain controller and workstation virtual machines."
+      }
+    },
     "domainFQDN": {
       "type": "string",
       "defaultValue": "contoso.com",
+      "maxLength": 255,
       "minLength": 3,
       "metadata": {
         "description": "FQDN for the Active Directory domain (e.g. contoso.com)."
@@ -94,6 +106,24 @@
       "type": "string",
       "metadata": {
         "description": "Globally unique name for the Log Analytics workspace."
+      }
+    },
+    "logAnalyticsWorkspaceRetention": {
+      "type": "int",
+      "defaultValue": 30,
+      "maxValue": 730,
+      "minValue": 30,
+      "metadata": {
+        "description": "Duration to retain Log Analytics workspace data, in days. Note that the pay-as-you-go pricing tier has a minimum 30-day retention."
+      }
+    },
+    "logAnalyticsWorkspaceDailyQuota": {
+      "type": "int",
+      "defaultValue": 5,
+      "maxValue": 10,
+      "minValue": 1,
+      "metadata": {
+        "description": "Daily quota for Log Analytics workspace data ingestion, in GB."
       }
     }
   },
@@ -394,7 +424,7 @@
             "value": "[parameters('domainControllerName')]"
           },
           "vmSize": {
-            "value": "Standard_DS1_v2"
+            "value": "[parameters('virtualMachineSize')]"
           },
           "vmPublisher": {
             "value": "MicrosoftWindowsServer"
@@ -735,7 +765,7 @@
             "value": "[parameters('workstationName')]"
           },
           "vmSize": {
-            "value": "Standard_DS1_v2"
+            "value": "[parameters('virtualMachineSize')]"
           },
           "vmPublisher": {
             "value": "MicrosoftWindowsDesktop"
@@ -940,13 +970,13 @@
             "value": "[parameters('logAnalyticsWorkspaceName')]"
           },
           "retentionInDays": {
-            "value": 30
+            "value": "[parameters('logAnalyticsWorkspaceRetention')]"
           },
           "sku": {
             "value": "PerGB2018"
           },
           "dailyQuotaGb": {
-            "value": 5
+            "value": "[parameters('logAnalyticsWorkspaceDailyQuota')]"
           }
         },
         "template": {

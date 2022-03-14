@@ -25,9 +25,17 @@ param domainControllerName string = 'DC01'
 @description('Name for the workstation virtual machine.')
 param workstationName string = 'WS01'
 
+@description('Size for both the domain controller and workstation virtual machines.')
+@allowed([
+  'Standard_DS1_v2'
+  'Standard_D2s_v3'
+])
+param virtualMachineSize string = 'Standard_DS1_v2'
+
 // Domain parameters
 @description('FQDN for the Active Directory domain (e.g. contoso.com).')
 @minLength(3)
+@maxLength(255)
 param domainFQDN string = 'contoso.com'
 
 @description('Administrator username for both the domain controller and workstation virtual machines.')
@@ -44,6 +52,16 @@ param adminPassword string
 // Log Analytics workspace parameters
 @description('Globally unique name for the Log Analytics workspace.')
 param logAnalyticsWorkspaceName string
+
+@description('Duration to retain Log Analytics workspace data, in days. Note that the pay-as-you-go pricing tier has a minimum 30-day retention.')
+@minValue(30)
+@maxValue(730)
+param logAnalyticsWorkspaceRetention int = 30
+
+@description('Daily quota for Log Analytics workspace data ingestion, in GB.')
+@minValue(1)
+@maxValue(10)
+param logAnalyticsWorkspaceDailyQuota int = 5
 
 // Deploy the virtual network
 module virtualNetwork 'modules/network.bicep' = {
@@ -65,7 +83,7 @@ module domainController 'modules/vm.bicep' = {
     location: location
     subnetId: virtualNetwork.outputs.subnetId
     vmName: domainControllerName
-    vmSize: 'Standard_DS1_v2'
+    vmSize: virtualMachineSize
     vmPublisher: 'MicrosoftWindowsServer'
     vmOffer: 'WindowsServer'
     vmSku: '2019-Datacenter'
@@ -134,7 +152,7 @@ module workstation 'modules/vm.bicep' = {
     location: location
     subnetId: virtualNetwork.outputs.subnetId
     vmName: workstationName
-    vmSize: 'Standard_DS1_v2'
+    vmSize: virtualMachineSize
     vmPublisher: 'MicrosoftWindowsDesktop'
     vmOffer: 'Windows-10'
     vmSku: 'win10-21h2-pro'
@@ -183,9 +201,9 @@ module workspace 'modules/sentinel.bicep' = {
   params: {
     location: location
     logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
-    retentionInDays: 30
+    retentionInDays: logAnalyticsWorkspaceRetention
     sku: 'PerGB2018'
-    dailyQuotaGb: 5
+    dailyQuotaGb: logAnalyticsWorkspaceDailyQuota
   }
 }
 
